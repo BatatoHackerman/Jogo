@@ -137,6 +137,177 @@ init python:
 
 define config.layers = ['master', 'chars', 'transient', 'screens', 'overlay']
 
+# Here's the code for the phone!
+
+define nvl_mode = "phone"  ##Allow the NVL mode to become a phone conversation
+define MC_Name = "Verônica" ##The name of the main character, used to place them on the screen
+
+init -1 python:
+    phone_position_x = 0.3
+    phone_position_y = 0.5
+
+    def Phone_ReceiveSound(event, interact=True, **kwargs):
+        if event == "show_done":
+            renpy.sound.play("audio/ReceiveText.ogg")
+    def Phone_SendSound(event, interact=True, **kwargs):
+        if event == "show_done":
+            renpy.sound.play("audio/SendText.ogg")
+    def print_bonjour():
+        print("bonjour")
+
+
+transform phone_transform(pXalign=0.5, pYalign=0.5):
+    xcenter pXalign
+    yalign pYalign
+
+transform phone_appear(pXalign=0.5, pYalign=0.5): #Used only when the dialogue have one element
+    xcenter pXalign
+    yalign pYalign
+
+    on show:
+        yoffset 1080
+        easein_back 1.0 yoffset 0
+
+    
+transform message_appear(pDirection):
+    alpha 0.0
+    xoffset 50 * pDirection
+    parallel:
+        ease 0.5 alpha 1.0
+    parallel:
+        easein_back 0.5 xoffset 0
+
+transform message_appear_icon():
+    zoom 0.0
+    easein_back 0.5 zoom 1.0
+    
+
+transform message_narrator:
+    alpha 0.0
+    yoffset -50
+
+    parallel:
+        ease 0.5 alpha 1.0
+    parallel:
+        easein_back 0.5 yoffset 0
+
+screen PhoneDialogue(dialogue, items=None):
+
+    style_prefix "phoneFrame"
+    frame at phone_transform(phone_position_x, phone_position_y):
+        if len(dialogue) == 1:
+            at phone_appear(phone_position_x, phone_position_y)
+        viewport:
+            draggable True
+            mousewheel True
+            # cols 1
+            yinitial 1.0
+            # scrollbars "vertical"
+            vbox:
+                null height 100
+                use nvl_phonetext(dialogue)
+                null height 200
+
+
+screen nvl_phonetext(dialogue):
+    style_prefix None
+
+    $ previous_d_who = None
+    for id_d, d in enumerate(dialogue):
+        if d.who == None: # Narrator
+            text d.what:
+                    xpos -335
+                    ypos 0.0
+                    xsize 350
+                    text_align 0.5
+                    italic True
+                    size 25
+                    slow_cps False
+                    id d.what_id
+                    if d.current:
+                        at message_narrator
+        else:
+            if d.who == MC_Name:
+                $ message_frame = "phone_send_frame"
+            else:
+                $ message_frame = "phone_received_frame"
+
+            hbox:
+                spacing 10
+                if d.who == MC_Name:
+                    box_reverse True
+                
+                #If this is the first message of the character, show an icon
+                if previous_d_who != d.who:
+                    if d.who == MC_Name:
+                        $ message_icon = "phone_send_icon"
+                    else:
+                        $ message_icon = "phone_received_icon"
+
+                    add message_icon:
+                        if d.current:
+                            at message_appear_icon()
+                        
+                else:
+                    null width 107
+
+                vbox:
+                    yalign 1.0
+                    if d.who != MC_Name and previous_d_who != d.who:
+                        text d.who
+
+                    frame:
+                        padding (22,22)
+                        
+
+                        background Frame(message_frame, 23,23,23,23)
+                        xsize 360
+
+                        if d.current:
+                            if d.who == MC_Name:
+                                at message_appear(1)
+                            else:
+                                at message_appear(-1)
+
+                        text d.what:
+                            pos (0,0)
+                            xsize 320
+                            slow_cps False
+                            
+
+                            if d.who == MC_Name :
+                                color "#FFF"
+                                text_align 1.0
+                                xpos -580
+                            else:
+                                color "#000"
+
+                                
+                            id d.what_id
+        $ previous_d_who = d.who
+                    
+style phoneFrame is default
+
+style phoneFrame_frame:
+    background Transform("phone_background_hd", xcenter=0.5,yalign=0.5)
+    foreground Transform("phone_foreground_hd", xcenter=0.5,yalign=0.5)
+    
+    ysize 815
+    xsize 495
+
+style phoneFrame_viewport:
+    yfill True
+    xfill True
+
+    yoffset -20
+
+style phoneFrame_vbox:
+    spacing 10
+    xfill True
+
+
+
+
 style window is default
 style say_label is default
 style say_dialogue is default
@@ -1326,34 +1497,40 @@ style notify_text:
 
 screen nvl(dialogue, items=None):
 
-    window:
-        style "nvl_window"
+    #### ADD THIS TO MAKE THE PHONE WORK!! :) ###
+    if nvl_mode == "phone":
+        use PhoneDialogue(dialogue, items)
+    else:
+    ####
+    ## Indent the rest of the screen
+        window:
+            style "nvl_window"
 
-        has vbox:
-            spacing gui.nvl_spacing
+            has vbox:
+                spacing gui.nvl_spacing
 
-        ## Exibe o diálogo em uma vpgrid ou na vbox.
-        if gui.nvl_height:
+            ## Displays dialogue in either a vpgrid or the vbox.
+            if gui.nvl_height:
 
-            vpgrid:
-                cols 1
-                yinitial 1.0
+                vpgrid:
+                    cols 1
+                    yinitial 1.0
+
+                    use nvl_dialogue(dialogue)
+
+            else:
 
                 use nvl_dialogue(dialogue)
 
-        else:
+            ## Displays the menu, if given. The menu may be displayed incorrectly if
+            ## config.narrator_menu is set to True, as it is above.
+            for i in items:
 
-            use nvl_dialogue(dialogue)
+                textbutton i.caption:
+                    action i.action
+                    style "nvl_button"
 
-        ## Exibe o menu, se fornecido. O menu poderá ser exibido incorretamente
-        ## se config.narrator_menu estiver definido como True.
-        for i in items:
-
-            textbutton i.caption:
-                action i.action
-                style "nvl_button"
-
-    add SideImage() xalign 0.0 yalign 1.0
+        add SideImage() xalign 0.0 yalign 1.0
 
 
 screen nvl_dialogue(dialogue):
@@ -1375,8 +1552,8 @@ screen nvl_dialogue(dialogue):
                     id d.what_id
 
 
-## Isso controla o número máximo de entradas do modo NVL que podem ser exibidas
-## de uma vez.
+## This controls the maximum number of NVL-mode entries that can be displayed at
+## once.
 define config.nvl_list_length = gui.nvl_list_length
 
 style nvl_window is default
@@ -1406,7 +1583,7 @@ style nvl_label:
     yanchor 0.0
     xsize gui.nvl_name_width
     min_width gui.nvl_name_width
-    textalign gui.nvl_name_xalign
+    text_align gui.nvl_name_xalign
 
 style nvl_dialogue:
     xpos gui.nvl_text_xpos
@@ -1414,7 +1591,7 @@ style nvl_dialogue:
     ypos gui.nvl_text_ypos
     xsize gui.nvl_text_width
     min_width gui.nvl_text_width
-    textalign gui.nvl_text_xalign
+    text_align gui.nvl_text_xalign
     layout ("subtitle" if gui.nvl_text_xalign else "tex")
 
 style nvl_thought:
@@ -1423,7 +1600,7 @@ style nvl_thought:
     ypos gui.nvl_thought_ypos
     xsize gui.nvl_thought_width
     min_width gui.nvl_thought_width
-    textalign gui.nvl_thought_xalign
+    text_align gui.nvl_thought_xalign
     layout ("subtitle" if gui.nvl_text_xalign else "tex")
 
 style nvl_button:
@@ -1432,7 +1609,7 @@ style nvl_button:
     xanchor gui.nvl_button_xalign
 
 style nvl_button_text:
-    properties gui.text_properties("nvl_button")
+    properties gui.button_text_properties("nvl_button")
 
 
 ## Tela de bolhas ##############################################################
