@@ -1,25 +1,47 @@
 define N = Character(None, callback=partial(blur_callback, None))
 define e = Character('Agressor', callback=partial(blur_callback, "e"))
+define c1 = Character('colega1', callback=partial(blur_callback, "c1"))
+define c2 = Character('colega2', callback=partial(blur_callback, "c2"))
+define V = Character("Verônica", callback=partial(blur_callback, "V"))
+
+define e_nvl = Character('Agressor', kind=nvl, callback=Phone_ReceiveSound)
+define c1_nvl = Character('colega1', kind=nvl, callback=Phone_ReceiveSound)
+define c2_nvl = Character('colega2', kind=nvl, callback=Phone_ReceiveSound)
+define V_nvl = Character("Verônica", kind=nvl, callback=Phone_SendSound)
+
+define config.adv_nvl_transition = None
+define config.nvl_adv_transition = Dissolve(0.3)
 
 transform mindfog:
     blur 4
 
 label start:
 
-    scene 1
+    scene onibus
     with fade
+    show agressor-neutro at right onlayer chars
 
-    "esta é a minha visual novel de teste, para aprender a usar o ren'py."
-    "ela é bem simples, mas tem um pouco de tudo o que eu quero aprender a usar."
-    with fade
+    c1_nvl "Bom dia, Nica!"
+    c1_nvl "A apresentação de ontem foi incrível."
+    c1_nvl "A diretoria ficou comentando sua proposta."
+    show agressor-feliz at right onlayer chars
+    c2_nvl "Sério, você salvou aquela reunião. "
+    c2_nvl "Eu não teria pensado naquela solução."
+    jump start2
 
-    show agressor-assustado at left onlayer chars
+label start2:
+
+    scene onibus    
+    e_nvl "Já chegou na empresa?"
     show agressor-espanto at right onlayer chars
-    
-
-    e "You've created a new Ren'Py game."
-
-    e "Once you add a story, pictures, and music, you can release it to the world!"
+    e_nvl "Você não respondeu ainda."
+    e_nvl "Está tudo bem??"
+    show agressor-arrependido at right onlayer chars
+    e_nvl "Eu fiz alguma coisa? Me responde por favor" 
+    e_nvl "Estou esperando você na entrada." 
+    show agressor-assustado at right onlayer chars 
+    e_nvl "Estou preocupado com você ."
+   
 
     menu:
 
