@@ -1,4 +1,4 @@
-################################################################################
+﻿################################################################################
 ## Inicialização
 ################################################################################
 
@@ -122,6 +122,15 @@ init python:
 
 transform bg_blur:
     blur 4
+
+init python:
+    def multi_callback(event, interact=True, **kwargs):
+        try:
+            blur_callback(name, event, interact=True, **kwargs)
+            name_callback(event, interact=True, name=None, **kwargs)
+        except Exception as e:
+            renpy.log("Erro no multi_callback: {}".format(e))
+
 init python:
     from functools import partial
     def blur_callback(name, event, interact=True, **kwargs):
