@@ -83,6 +83,23 @@ transform mindfog:
 
 label start:
 
+    scene black
+    with fade
+
+    "{b}Aviso:{/b}Este jogo aborda temas relacionados a relacionamentos abusivos, manipulação emocional e isolamento social."
+    "O objetivo da obra é promover reflexão e conscientização sobre esses assuntos.
+Algumas situações podem causar desconforto emocional."
+
+    menu:
+        "Tem certeza que deseja continuar?"
+
+        "Sim, quero continuar.":
+            jump start1
+        "Não, quero sair.":
+            return    
+    
+label start1:
+
     scene onibus
     with fade
     show veronica neutra at right onlayer chars
