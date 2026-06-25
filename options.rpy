@@ -1,4 +1,4 @@
-## Esse arquivo contém opções que podem ser alteradas para personalizar o jogo.
+﻿## Esse arquivo contém opções que podem ser alteradas para personalizar o jogo.
 ##
 ## As linhas que começam com duas marcas '#' são comentários e você não deve
 ## descomentá-las. As linhas que começam com uma única marca '#' são códigos

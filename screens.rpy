@@ -123,13 +123,7 @@ init python:
 transform bg_blur:
     blur 4
 
-init python:
-    def multi_callback(event, interact=True, **kwargs):
-        try:
-            blur_callback(name, event, interact=True, **kwargs)
-            name_callback(event, interact=True, name=None, **kwargs)
-        except Exception as e:
-            renpy.log("Erro no multi_callback: {}".format(e))
+
 
 init python:
     from functools import partial
@@ -1543,6 +1537,34 @@ screen nvl(dialogue, items=None):
 
 
 screen nvl_dialogue(dialogue):
+    for d in dialogue:
+        # Verifica se o personagem que está falando pertence ao contato ativo no momento
+        if d.who is not None and store.contato_atual in d.who_id:
+            window:
+                id d.window_id
+                vbox:
+                    spacing 5 
+                    yfit gui.nvl_height is None
+                    
+                    text d.who:
+                        id d.who_id
+                    text d.what:
+                        id d.what_id
+    for d in dialogue:
+        window:
+            id d.window_id
+            # Trocamos 'fixed' por 'vbox' para empilhar os elementos
+            vbox:
+                spacing 5 # Espaço entre o nome e a mensagem
+                yfit gui.nvl_height is None
+                if d.who is not None:
+                    text d.who:
+                        id d.who_id
+                        # Você pode adicionar estilos específicos para o nome aqui
+                        # size 22 
+                        # bold True
+                text d.what:
+                    id d.what_id
 
     for d in dialogue:
 

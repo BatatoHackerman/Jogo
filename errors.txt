@@ -1,0 +1,10 @@
+﻿I'm sorry, but errors were detected in your script. Please correct the
+errors listed below, and try again.
+
+
+File "game/script.rpy", line 137: expected simple expression
+    play audio "WhatsApp Audio 2026-06-25 at 14.30.33.mpeg" fadein
+                                                                  ^
+
+Ren'Py Version: Ren'Py 8.5.3.26051504
+Thu Jun 25 14:55:31 2026
