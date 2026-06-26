@@ -1,4 +1,4 @@
-﻿################################################################################
+################################################################################
 ## Inicialização
 ################################################################################
 
@@ -292,9 +292,6 @@ screen nvl_phonetext(dialogue):
 style phoneFrame is default
 
 style phoneFrame_frame:
-    background Transform("phone_background_hd", xcenter=0.5,yalign=0.5)
-    foreground Transform("phone_foreground_hd", xcenter=0.5,yalign=0.5)
-    
     ysize 815
     xsize 495
 
