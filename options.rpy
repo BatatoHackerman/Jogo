@@ -1,4 +1,4 @@
-﻿## Esse arquivo contém opções que podem ser alteradas para personalizar o jogo.
+## Esse arquivo contém opções que podem ser alteradas para personalizar o jogo.
 ##
 ## As linhas que começam com duas marcas '#' são comentários e você não deve
 ## descomentá-las. As linhas que começam com uma única marca '#' são códigos
@@ -12,7 +12,7 @@
 ##
 ## O _() ao redor da string a marca como elegível para tradução.
 
-define config.name = _("Entre Linhas 1")
+define config.name = _("Faith Story: A Luta contra a Misoginia")
 
 
 ## Determina se o título fornecido acima será mostrado na tela do menu
@@ -37,7 +37,7 @@ define gui.about = _p("""
 ## construída. Ele deve ser somente ASCII e não deve conter espaços, dois pontos
 ## ou ponto e vírgula.
 
-define build.name = "EntreLinhas1"
+define build.name = "Faith Story"
 
 
 ## Sons e música ###############################################################
